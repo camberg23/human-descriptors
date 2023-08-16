@@ -267,7 +267,7 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
     cluster_texts = []
     
     for i, centroid in enumerate(kmeans.cluster_centers_):
-        closest_words = interpret_clusters(embeddings_dict, centroid, n_words=8)
+        closest_words = interpret_clusters(embeddings_dict, centroid, 8)
         legend_text = f"Cluster {i+1}: {', '.join(closest_words)}"
         cluster_texts.append(legend_text)
         fig.add_trace(go.Scatter3d(x=[transformed_centroids[i][0]], y=[transformed_centroids[i][1]], z=[transformed_centroids[i][2]], mode='markers',
@@ -398,7 +398,7 @@ st.write("Analyze descriptors from Condon adjective dataset (used to create the 
 
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter the human descriptor:")
-n_clusters = st.number_input("Number of Clusters:", min_value=1, value=13, step=1)
+n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
 if st.button("Analyze"):
