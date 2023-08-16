@@ -404,7 +404,7 @@ n_similar = st.number_input("Number of similar words to return:", min_value=1, v
 if st.button("Analyze"):
     with st.spinner('Analyzing the descriptor... This might take a few seconds.'):
         plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
-        st.plotly_chart(plot)
+        st.plotly_chart(plot, use_container_width=True)
         for result in results:
             st.write(result)
 
