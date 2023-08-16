@@ -1,1 +1,10 @@
+imageio
+numpy
+openai
+pandas
+plotly
+requests
+scikit-learn
 streamlit
+tqdm
+transformers
