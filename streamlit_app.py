@@ -365,7 +365,7 @@ def descriptor_blender(descriptors, N=10):
     """
     # Check and compute embeddings for missing descriptors
     embeddings_dict = load_embeddings('condon_cleaned')
-    
+    descriptors = cleaned_descriptors = [desc.strip().lower() for desc in descriptors]
     intersection_words = []
     
     for descriptor in descriptors:
