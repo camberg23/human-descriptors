@@ -350,7 +350,7 @@ def analyze_descriptor(descriptor, n_clusters=13, n_words=15, gif=False):
     return fig, results
 
 # Main Function for Descriptor Blender
-def descriptor_blender(descriptors, embeddings_dict, N=10):
+def descriptor_blender(descriptors, N=10):
     """
     Combines a list of descriptors using additive method and finds 
     the words in the embeddings_dict that are closest to this combined representation without clustering.
@@ -364,6 +364,8 @@ def descriptor_blender(descriptors, embeddings_dict, N=10):
     - None: Prints the descriptors that are close to the combined representation of the input descriptors.
     """
     # Check and compute embeddings for missing descriptors
+    embeddings_dict = load_embeddings('condon_cleaned')
+    
     intersection_words = []
     
     for descriptor in descriptors:
@@ -409,7 +411,7 @@ words_to_blend = st.text_area("Enter words to blend (comma-separated):").split('
 num_output_words = st.number_input("Number of output words:", min_value=1, step=1)
 
 if st.button("Blend"):
-    intersection_words = descriptor_blender(words_to_blend, embeddings_dict, num_output_words)
+    intersection_words = descriptor_blender(words_to_blend, num_output_words)
     st.write("Intersection Words:")
     for word in intersection_words:
         st.write(word)
