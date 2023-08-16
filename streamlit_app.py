@@ -311,4 +311,82 @@ def get_similar_descriptors(descriptor, embeddings_dict, N=5):
     # Return the top N similar words
     return sorted_words[:N]
 
-st.write("Hello, Streamlit!")
+# Main Function for Analyze Descriptor
+def analyze_descriptor(descriptor, n_clusters=13, n_words=15, gif=False):
+    """
+    Analyze a given descriptor:
+    - Visualize it in a 3D cluster space.
+    - Identify and print descriptors in its cluster.
+    - Identify and print similar descriptors.
+    - Identify and print opposite descriptors.
+    """
+    results = []
+    sentiment_dict = load_sentiment_dict('sentiment_dict.pkl')
+    embeddings_dict = load_embeddings('condon_cleaned')
+    
+    # If the descriptor is not in embeddings_dict, check if it's a valid word 
+    # and then compute embeddings for it before calling the visualization function.
+    if descriptor not in embeddings_dict:
+        if not is_valid_word(descriptor):
+            raise ValueError(f"'{descriptor}' is not a recognized word.")
+        embeddings_dict[descriptor] = get_embeddings(descriptor)
+    
+    # 1. Visualize the word in 3D cluster space using the rotating gif
+    fig, word_cluster_map, cluster_text = visualize_embeddings_complete(embeddings_dict, n_clusters, 
+                                          n_words, highlight_word=descriptor,gif=gif)
+    
+    
+    # 2. Print N descriptors closest to the centroid of that cluster
+    cluster_id = word_cluster_map[descriptor]
+    results.append(f"\n'{descriptor.capitalize()}' belongs to {cluster_text[cluster_id]}")
+    
+    # 3. Print N descriptors most similar and opposite to the input word
+    similar = get_similar_descriptors(descriptor, embeddings_dict, N=n_words)
+    results.append(f"\nDescriptors most mathematically similar to '{descriptor}': {', '.join(similar)}")
+    print()
+    __, __, r1, r2 = predict_sentiment(descriptor)
+    results.append(r1)
+    results.append(r2)
+    return fig, results
+
+# Main Function for Descriptor Blender
+def descriptor_blender(descriptors, embeddings_dict, N=10):
+    """
+    Combines a list of descriptors using additive method and finds 
+    the words in the embeddings_dict that are closest to this combined representation without clustering.
+    
+    Args:
+    - descriptors (list of str): List of descriptors.
+    - embeddings_dict (dict): Dictionary of descriptors with their embeddings.
+    - N (int): Number of closest descriptors to return. Default is 10.
+    
+    Returns:
+    - None: Prints the descriptors that are close to the combined representation of the input descriptors.
+    """
+    # Check and compute embeddings for missing descriptors
+    intersection_words = []
+    
+    for descriptor in descriptors:
+        if descriptor not in embeddings_dict:
+            if is_valid_word(descriptor):
+                embedding = get_embeddings(descriptor)
+                embeddings_dict[descriptor] = embedding
+            else:
+                raise ValueError(f"{descriptor} not found in the embeddings dictionary, and it's not a valid descriptor.")
+    
+    # Compute the combined embedding using the additive method
+    combined_embedding = sum([embeddings_dict[descriptor] for descriptor in descriptors])
+    
+    # Remove the original descriptors to not have them in the result
+    words_to_compare = {word: embedding for word, embedding in embeddings_dict.items() if word not in descriptors}
+    
+    # Calculate enriched scores for words
+    distances_to_combined = {word: np.linalg.norm(embedding - combined_embedding) for word, embedding in words_to_compare.items()}
+    enrich_scores = {word: distance * sum([np.linalg.norm(embeddings_dict[descriptor] - embeddings_dict[word]) for descriptor in descriptors]) for word, distance in distances_to_combined.items()}
+    
+    # Get the top N words based on enriched scores
+    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word])[:N]
+    return closest_words
+
+
+st.write("Hello, Streamlit, v2!")
