@@ -29,7 +29,7 @@ import pickle
 # OpenAI
 import openai
 # Set up OpenAI API key
-openai_key = st.secrets["OPENAI_KEY"]
+openai.api_key = st.secrets["OPENAI_KEY"]
 
 # Helper Functions
 # Function to compute embeddings for a given text
