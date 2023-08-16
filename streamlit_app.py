@@ -104,7 +104,7 @@ def load_sentiment_dict(path):
 
 def get_N_closest_words(descriptor, sentiment_dict, N=5):
     """Get N closest words with a similar sentiment score within the same sentiment label."""
-    label, score, __, __ = sentiment_dict[descriptor]["label"], sentiment_dict[descriptor]["score"]
+    label, score = sentiment_dict[descriptor]["label"], sentiment_dict[descriptor]["score"]
     
     # Filter the words with the same sentiment label and exclude the provided descriptor
     same_label_words = {word: info["score"] for word, info in sentiment_dict.items() 
