@@ -415,7 +415,7 @@ num_output_words = st.number_input("Number of output words:", min_value=1, value
 
 if st.button("Blend"):
     intersection_words = descriptor_blender(words_to_blend, num_output_words)
-    st.write("Intersection Words:")
+    st.write("Descriptors that blend your input:")
     
     # Create two columns to display the words
     col1, col2 = st.columns(2)
