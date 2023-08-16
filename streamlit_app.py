@@ -17,9 +17,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 import imageio.v2 as imageio_v2
 
-# Display utilities
-from IPython.display import display, HTML
-
 # External libraries
 import requests
 from tqdm import tqdm
