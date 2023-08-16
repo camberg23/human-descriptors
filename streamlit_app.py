@@ -267,7 +267,7 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
     cluster_texts = []
     
     for i, centroid in enumerate(kmeans.cluster_centers_):
-        closest_words = interpret_clusters(embeddings_dict, centroid, n_words)
+        closest_words = interpret_clusters(embeddings_dict, centroid, n_words=8)
         legend_text = f"Cluster {i+1}: {', '.join(closest_words)}"
         cluster_texts.append(legend_text)
         fig.add_trace(go.Scatter3d(x=[transformed_centroids[i][0]], y=[transformed_centroids[i][1]], z=[transformed_centroids[i][2]], mode='markers',
@@ -277,7 +277,7 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
 
     
     fig.update_layout(title_text=f"{n_clusters} Clusters of Human Descriptors",
-                  title_x=0.3, title_y=0.95, title_font_size=24, # Add title_y attribute
+                  title_x=0.25, title_y=0.92, title_font_size=24, # Add title_y attribute
                   scene=dict(xaxis_title='PC1', yaxis_title='PC2', zaxis_title='PC3'),
                   autosize=False, width=1200, height=1000, 
                   legend=dict(y=-0.1, x=0.5, xanchor='center', orientation='h'))
@@ -393,11 +393,11 @@ def descriptor_blender(descriptors, N=10):
 
 # Streamlit App
 
-st.title("Descriptor Analyzer & Blender")
-st.write("Analyze descriptors and blend them to find intersections.")
+st.title("Human Descriptor Analyzer & Blender")
+st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
-descriptor = st.text_input("Enter the word/descriptor:")
+descriptor = st.text_input("Enter the human descriptor:")
 n_clusters = st.number_input("Number of Clusters:", min_value=1, value=13, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
