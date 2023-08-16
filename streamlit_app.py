@@ -397,12 +397,12 @@ st.title("Human Descriptor Analyzer & Blender")
 st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
-descriptor = st.text_input("Enter the human descriptor:")
+descriptor = st.text_input("Enter any adjective that describes human personality:")
 n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
 if st.button("Analyze"):
-    with st.spinner('Analyzing the descriptor... This might take a few seconds.'):
+    with st.spinner('Analyzing the descriptor...this will take approximately 10 seconds.'):
         plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
         st.plotly_chart(plot, use_container_width=True)
         for result in results:
