@@ -277,10 +277,11 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
 
     
     fig.update_layout(title_text=f"{n_clusters} Clusters of Human Descriptors",
-                      title_x=0.5, title_font_size=24,
-                      scene=dict(xaxis_title='PC1', yaxis_title='PC2', zaxis_title='PC3'),
-                      autosize=False, width=1200, height=1000, 
-                      legend=dict(y=-0.1, x=0.5, xanchor='center', orientation='h'))
+                  title_x=0.3, title_y=0.95, title_font_size=24, # Add title_y attribute
+                  scene=dict(xaxis_title='PC1', yaxis_title='PC2', zaxis_title='PC3'),
+                  autosize=False, width=1200, height=1000, 
+                  legend=dict(y=-0.1, x=0.5, xanchor='center', orientation='h'))
+
     
     if gif:
         angles = list(range(0, 360, 5))
@@ -415,7 +416,7 @@ if st.button("Blend"):
     st.write("Intersection Words:")
     
     # Create two columns to display the words
-    col1, col2 = st.beta_columns(2)
+    col1, col2 = st.columns(2)
     
     # Split the words into two lists
     half_len = len(intersection_words) // 2
