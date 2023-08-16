@@ -388,5 +388,31 @@ def descriptor_blender(descriptors, embeddings_dict, N=10):
     closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word])[:N]
     return closest_words
 
+# Streamlit App
+
+st.title("Descriptor Analyzer & Blender")
+st.write("Analyze descriptors and blend them to find intersections.")
+
+st.header("Analyze Descriptor")
+descriptor = st.text_input("Enter the word/descriptor:")
+n_clusters = st.number_input("Number of Clusters:", min_value=1, value=13, step=1)
+n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
+
+if st.button("Analyze"):
+    plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
+    st.plotly_chart(plot)
+    for result in results:
+        st.write(result)
+
+st.header("Descriptor Blender")
+words_to_blend = st.text_area("Enter words to blend (comma-separated):").split(',')
+num_output_words = st.number_input("Number of output words:", min_value=1, step=1)
+
+if st.button("Blend"):
+    intersection_words = descriptor_blender(words_to_blend, num_output_words)
+    st.write("Intersection Words:")
+    for word in intersection_words:
+        st.write(word)
+
 
 st.write("Hello, Streamlit, v2!")
