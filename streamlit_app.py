@@ -402,10 +402,12 @@ n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
 if st.button("Analyze"):
-    plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
-    st.plotly_chart(plot, use_container_width=True)  # Use the container width for the chart
-    for result in results:
-        st.write(result)
+    with st.spinner('Analyzing the descriptor... This might take a few seconds.'):
+        plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
+        st.plotly_chart(plot)
+        for result in results:
+            st.write(result)
+
 
 st.header("Descriptor Blender")
 words_to_blend = st.text_area("Enter words to blend (comma-separated):").split(',')
