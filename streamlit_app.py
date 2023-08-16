@@ -402,7 +402,7 @@ n_similar = st.number_input("Number of similar words to return:", min_value=1, v
 
 if st.button("Analyze"):
     plot, results = analyze_descriptor(descriptor, n_clusters, n_similar)
-    st.plotly_chart(plot)
+    st.plotly_chart(plot, use_container_width=True)  # Use the container width for the chart
     for result in results:
         st.write(result)
 
@@ -413,5 +413,18 @@ num_output_words = st.number_input("Number of output words:", min_value=1, step=
 if st.button("Blend"):
     intersection_words = descriptor_blender(words_to_blend, num_output_words)
     st.write("Intersection Words:")
-    for word in intersection_words:
-        st.write(word)
+    
+    # Create two columns to display the words
+    col1, col2 = st.beta_columns(2)
+    
+    # Split the words into two lists
+    half_len = len(intersection_words) // 2
+    words_col1 = intersection_words[:half_len]
+    words_col2 = intersection_words[half_len:]
+    
+    for word in words_col1:
+        col1.write(word)
+    
+    for word in words_col2:
+        col2.write(word)
+
