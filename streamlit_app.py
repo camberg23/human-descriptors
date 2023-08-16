@@ -409,10 +409,7 @@ words_to_blend = st.text_area("Enter words to blend (comma-separated):").split('
 num_output_words = st.number_input("Number of output words:", min_value=1, step=1)
 
 if st.button("Blend"):
-    intersection_words = descriptor_blender(words_to_blend, num_output_words)
+    intersection_words = descriptor_blender(words_to_blend, embeddings_dict, num_output_words)
     st.write("Intersection Words:")
     for word in intersection_words:
         st.write(word)
-
-
-st.write("Hello, Streamlit, v2!")
