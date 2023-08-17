@@ -334,7 +334,7 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
     cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters)
     centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, n_clusters=n_clusters)
     closest_words_to_centroid = interpret_clusters(embeddings_dict, centroid, n_words)
-    results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
+    # results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
 
     # Identifying descriptors most similar and opposite to the input word
     similar = get_similar_descriptors(descriptor, embeddings_dict, N=n_words)
@@ -342,9 +342,11 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
 
     # Sentiment results
     __, __, r1, r2 = predict_sentiment(descriptor)
-    results.append(r1)
-    results.append(r2)
+    results.append(r1, r2)
+    # results.append(r2)
 
+    results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
+    results.append("(Visualize all of the clusters by clicking the button below!)")
     return results
 
 def analyze_descriptor_visual(descriptor, n_clusters=13, n_words=15, gif=False):
@@ -361,6 +363,47 @@ def analyze_descriptor_visual(descriptor, n_clusters=13, n_words=15, gif=False):
                                           n_words, highlight_word=descriptor, gif=gif)
     return fig
 
+# Main Function for Descriptor Blender
+def descriptor_blender(descriptors, N=10):
+    """
+    Combines a list of descriptors using additive method and finds 
+    the words in the embeddings_dict that are closest to this combined representation without clustering.
+    
+    Args:
+    - descriptors (list of str): List of descriptors.
+    - embeddings_dict (dict): Dictionary of descriptors with their embeddings.
+    - N (int): Number of closest descriptors to return. Default is 10.
+    
+    Returns:
+    - None: Prints the descriptors that are close to the combined representation of the input descriptors.
+    """
+    # Check and compute embeddings for missing descriptors
+    embeddings_dict = load_embeddings('condon_cleaned')
+    descriptors = cleaned_descriptors = [desc.strip().lower() for desc in descriptors]
+    intersection_words = []
+    
+    for descriptor in descriptors:
+        if descriptor not in embeddings_dict:
+            if is_valid_word(descriptor):
+                embedding = get_embeddings(descriptor)
+                embeddings_dict[descriptor] = embedding
+            else:
+                raise ValueError(f"{descriptor} not found in the embeddings dictionary, and it's not a valid descriptor.")
+    
+    # Compute the combined embedding using the additive method
+    combined_embedding = sum([embeddings_dict[descriptor] for descriptor in descriptors])
+    
+    # Remove the original descriptors to not have them in the result
+    words_to_compare = {word: embedding for word, embedding in embeddings_dict.items() if word not in descriptors}
+    
+    # Calculate enriched scores for words
+    distances_to_combined = {word: np.linalg.norm(embedding - combined_embedding) for word, embedding in words_to_compare.items()}
+    enrich_scores = {word: distance * sum([np.linalg.norm(embeddings_dict[descriptor] - embeddings_dict[word]) for descriptor in descriptors]) for word, distance in distances_to_combined.items()}
+    
+    # Get the top N words based on enriched scores
+    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word])[:N]
+    return closest_words
+    
 # Streamlit App
 st.title("Human Descriptor Analyzer & Blender")
 st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
@@ -374,16 +417,23 @@ n_similar = st.number_input("Number of similar words to return:", min_value=1, v
 if st.button("Analyze"):
     with st.spinner('Analyzing the descriptor...'):
         results = analyze_descriptor_text(descriptor, n_clusters, n_similar)
-        for result in results:
-            st.write(result)
+        st.session_state['analysis_results'] = results
 
 # New button for visualization
 if st.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
         plot = analyze_descriptor_visual(descriptor, n_clusters, n_similar)
-        st.plotly_chart(plot, use_container_width=True)
+        st.session_state['visualization'] = plot
 
-# Remaining Streamlit code related to the Descriptor Blender remains unchanged
+# Display stored results and visualization
+if 'analysis_results' in st.session_state:
+    for result in st.session_state['analysis_results']:
+        st.write(result)
+
+if 'visualization' in st.session_state:
+    st.plotly_chart(st.session_state['visualization'], use_container_width=True)
+
+# Remaining Streamlit code related to the Descriptor Blender
 st.header("Descriptor Blender")
 words_to_blend = st.text_area("Enter words to blend (comma-separated):").split(',')
 num_output_words = st.number_input("Number of output words:", min_value=1, value=20, step=1)
