@@ -334,7 +334,7 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
     cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters)
     centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, n_clusters=n_clusters)
     closest_words_to_centroid = interpret_clusters(embeddings_dict, centroid, n_words)
-    results.append(f"'{descriptor.capitalize()}' is closest to the words: {', '.join(closest_words_to_centroid)}")
+    results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
 
     # Identifying descriptors most similar and opposite to the input word
     similar = get_similar_descriptors(descriptor, embeddings_dict, N=n_words)
@@ -378,8 +378,8 @@ if st.button("Analyze"):
             st.write(result)
 
 # New button for visualization
-if st.button("Visualize"):
-    with st.spinner('Generating the visualization...this might take some time.'):
+if st.button("Visualize your descriptor in full 3D space (interactive)"):
+    with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
         plot = analyze_descriptor_visual(descriptor, n_clusters, n_similar)
         st.plotly_chart(plot, use_container_width=True)
 
