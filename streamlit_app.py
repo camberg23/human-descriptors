@@ -342,8 +342,8 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
 
     # Sentiment results
     __, __, r1, r2 = predict_sentiment(descriptor)
-    results.append(r1, r2)
-    # results.append(r2)
+    results.append(r1)
+    results.append(r2)
 
     results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
     results.append("(Visualize all of the clusters by clicking the button below!)")
