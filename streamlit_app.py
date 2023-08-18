@@ -421,8 +421,6 @@ if analyze_button_placeholder.button("Analyze"):
 # New button for visualization
 if visualize_button_placeholder.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
-        n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
-        n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
         plot = analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters, n_similar)
         st.session_state['visualization'] = plot
 
