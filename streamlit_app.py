@@ -410,13 +410,13 @@ st.write("Analyze descriptors from Condon adjective dataset (used to create the 
 
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter any adjective that describes human personality:")
-if " " in descriptor or "," in descriptor or len(descriptor) != 1:
-    st.warning("Please enter a single adjective without spaces or commas.")
 n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
 # When the "Analyze" button is pressed, only textual insights will be shown
 if st.button("Analyze"):
+    if " " in descriptor or "," in descriptor or len(descriptor) != 1:
+        st.warning("Please enter a single adjective without spaces or commas.")
     with st.spinner('Analyzing the descriptor...'):
         results = analyze_descriptor_text(descriptor, n_clusters, n_similar)
         st.session_state['analysis_results'] = results
