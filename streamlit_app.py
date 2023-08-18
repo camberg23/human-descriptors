@@ -173,21 +173,19 @@ def get_clusters(embeddings, n_clusters):
     labels = kmeans.fit_predict(embeddings)
     return labels, kmeans
 
-def get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters):
+def get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans):
     descriptor_embedding = embeddings_dict[descriptor]
     embeddings = list(embeddings_dict.values())
     
     # Find the index of the descriptor embedding in the embeddings list
     descriptor_index = next(i for i, emb in enumerate(embeddings) if np.array_equal(emb, descriptor_embedding))
     
-    kmeans = KMeans(n_clusters=n_clusters, n_init='auto')
     labels = kmeans.fit_predict(embeddings)
     
     # Return the cluster ID of the specified descriptor
     return labels[descriptor_index]
 
-def get_centroid_of_cluster(embeddings_dict, cluster_id, n_clusters=13):
-    _, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
+def get_centroid_of_cluster(embeddings_dict, cluster_id, kmeans, n_clusters=13):
     return kmeans.cluster_centers_[cluster_id]
 
 def get_similar_descriptors(descriptor, embeddings_dict, N=5):
@@ -257,7 +255,7 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
                                    z=[df[df['adjective'] == highlight_word]['z'].values[0]], 
                                    mode='markers', 
                                    marker=dict(size=15, color='red', symbol='circle', line=dict(color='Black', width=1)),
-                                   showlegend=True, name=f"Selected word: {highlight_word}"))
+                                   showlegend=True, name=f"Selected word: {highlight_word} (part of cluster __)"))
     cluster_texts = []
     
     for i, centroid in enumerate(kmeans.cluster_centers_):
@@ -308,13 +306,14 @@ def get_similar_descriptors(descriptor, embeddings_dict, N=5):
 
 # Main Function for Analyze Descriptor
 
-def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
+def analyze_descriptor_text(descriptor, kmeans, n_clusters=13, n_words=15):
     """
     Analyze a given descriptor:
     - Identify and print descriptors in its cluster.
     - Identify and print similar descriptors.
     - Identify and print opposite descriptors.
     """
+    labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
     results = []
     sentiment_dict = load_sentiment_dict('sentiment_dict.pkl')
     embeddings_dict = load_embeddings('condon_cleaned')
@@ -325,8 +324,8 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
         embeddings_dict[descriptor] = get_embeddings(descriptor)
 
     # Identifying the cluster of the descriptor
-    cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters)
-    centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, n_clusters=n_clusters)
+    cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans)
+    centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, kmeans, n_clusters=n_clusters)
     closest_words_to_centroid = interpret_clusters(embeddings_dict, centroid, n_words)
     # results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
 
@@ -416,8 +415,6 @@ visualization_placeholder = st.empty()
 
 # When the "Analyze" button is pressed, only textual insights will be shown
 if analyze_button_placeholder.button("Analyze"):
-    if " " in descriptor or "," in descriptor or len(descriptor) != 1:
-        st.warning("Please enter a single adjective without spaces or commas.")
     with st.spinner('Analyzing the descriptor...'):
         results = analyze_descriptor_text(descriptor, n_clusters, n_similar)
         st.session_state['analysis_results'] = results
@@ -430,7 +427,7 @@ if visualize_button_placeholder.button("Visualize your descriptor in full 3D spa
 
 # Display stored results and visualization in their respective placeholders
 if 'analysis_results' in st.session_state:
-    all_results = "\\n\\n".join(st.session_state['analysis_results'])
+    all_results = "\n\n".join(st.session_state['analysis_results'])
     analysis_results_placeholder.markdown(all_results)
 
 if 'visualization' in st.session_state:
