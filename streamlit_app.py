@@ -410,6 +410,8 @@ st.write("Analyze descriptors from Condon adjective dataset (used to create the 
 
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter any adjective that describes human personality:")
+if " " in descriptor or "," in descriptor:
+    st.warning("Please enter a single adjective without spaces or commas.")
 n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
@@ -439,6 +441,8 @@ words_to_blend = st.text_area("Enter words to blend (comma-separated):").split('
 num_output_words = st.number_input("Number of output words:", min_value=1, value=20, step=1)
 
 if st.button("Blend"):
+    if len(words_to_blend) < 2:
+        st.warning("Please enter at least two descriptors to blend.")
     intersection_words = descriptor_blender(words_to_blend, num_output_words)
     st.write("Descriptors that blend your input:")
     
