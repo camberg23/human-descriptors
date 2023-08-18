@@ -391,7 +391,7 @@ def descriptor_blender(descriptors, N=10):
     enrich_scores = {word: distance * sum([np.linalg.norm(embeddings_dict[descriptor] - embeddings_dict[word]) for descriptor in descriptors]) for word, distance in distances_to_combined.items()}
     
     # Get the top N words based on enriched scores
-    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word], reverse=True)[:N]
+    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word])[:N]
     return closest_words
     
 # Streamlit App
