@@ -411,7 +411,8 @@ analysis_results_placeholder = st.empty()
 visualize_button_placeholder = st.empty()
 visualization_placeholder = st.empty()
 
-labels, kmeans = get_clusters(embeddings, n_clusters)
+embeddings_dict = load_embeddings('condon_cleaned')
+labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
 
 # When the "Analyze" button is pressed, only textual insights will be shown
 if analyze_button_placeholder.button("Analyze"):
