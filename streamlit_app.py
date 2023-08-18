@@ -252,8 +252,8 @@ def visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, n
                                    y=[df[df['adjective'] == highlight_word]['y'].values[0]], 
                                    z=[df[df['adjective'] == highlight_word]['z'].values[0]], 
                                    mode='markers', 
-                                   marker=dict(size=15, color='red', symbol='circle', line=dict(color='Black', width=1)),
-                                   showlegend=True, name=f"Selected word: {highlight_word} (part of cluster {cluster_id})"))
+                                   marker=dict(size=15, color='red', symbol='cross', line=dict(color='Black', width=1)),
+                                   showlegend=True, name=f"Selected word: {highlight_word} (part of cluster {cluster_id+1})"))
     cluster_texts = []
     
     for i, centroid in enumerate(kmeans.cluster_centers_):
