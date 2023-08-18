@@ -399,10 +399,18 @@ st.title("Human Descriptor Analyzer & Blender")
 st.write("Analyze descriptors from Condon et al adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
-descriptor = st.text_input("Enter any adjective that describes human personality:")
+st.markdown("""
+Input a word that describes human personality, and receive insights on:
+- **Similar Descriptors**: Personality descriptors that have the most mathematically similar meaning to the input word in embedding-space.
+- **Word Connotation**: Understand the sentiment of the word using the Roberta sentiment analysis model.
+- **Similar Connotation**: Words that share a similar sentiment (not likely to have the same *meaning*).
+- **Cluster Information**: Discover the cluster the word belongs to, and get to know other words that signify that cluster.
+- **Interactive 3D Visualization** (Optional): Explore an interactive 3D space of all human descriptors in the Condon set, including the target word. Dive deep into the vast space of possible ways to describe a personality!
+""")
+descriptor = st.text_input("Enter any adjective that describes human personality—'they are a ________ person':")
 descriptor = descriptor.replace(" ", "").replace(",", "")
-n_clusters = st.number_input("Number of Clusters:", min_value=1, value=23, step=1)
-n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
+n_clusters = st.number_input("How many adjective groupings (more groupings = more fine-grained categories):", min_value=1, value=23, step=1)
+n_similar = st.number_input("How many related words to return:", min_value=1, value=15, step=1)
 
 # Placeholders for analyze button, results, visualize button, and visualization
 analyze_button_placeholder = st.empty()
@@ -452,14 +460,15 @@ if 'visualization' in st.session_state:
 
 # Remaining Streamlit code related to the Descriptor Blender
 st.header("Descriptor Blender")
+st.write("This tool blends the meanings of your input words to find words that capture aspects of all of them. For example, inputting the words 'funny', 'awkward', and 'endearing' might produce a blended word like 'quirky'.")
 words_to_blend = st.text_area("Enter words to blend (comma-separated):").split(',')
-num_output_words = st.number_input("Number of output words:", min_value=1, value=20, step=1)
+num_output_words = st.number_input("How many output words:", min_value=1, value=20, step=1)
 
 if st.button("Blend"):
     if len(words_to_blend) < 2:
         st.warning("Please enter at least two descriptors to blend.")
     intersection_words = descriptor_blender(words_to_blend, num_output_words)
-    st.write("Descriptors that blend your input:")
+    st.write("Descriptors that blend your input (higher in list = better blend score):")
     
     # Create two columns to display the words
     col1, col2 = st.columns(2)
