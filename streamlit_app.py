@@ -267,7 +267,7 @@ def visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, n
 
     
     fig.update_layout(title_text=f"{n_clusters} Clusters of Human Descriptors (Interactive)",
-                  title_x=0.23, title_y=0.92, title_font_size=24, # Add title_y attribute
+                  title_x=0.21, title_y=0.92, title_font_size=24, # Add title_y attribute
                   scene=dict(xaxis_title='PC1', yaxis_title='PC2', zaxis_title='PC3'),
                   autosize=False, width=1200, height=1000, 
                   legend=dict(y=-0.1, x=0.5, xanchor='center', orientation='h'))
