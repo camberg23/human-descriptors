@@ -208,7 +208,7 @@ def get_similar_descriptors(descriptor, embeddings_dict, N=5):
     # Return the top N similar words
     return sorted_words[:N]
 
-def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highlight_word=None, gif=False):
+def visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, n_words, highlight_word=None, gif=False):
     """
     Visualize the embeddings in a 3D cluster space.
     
@@ -224,7 +224,6 @@ def visualize_embeddings_complete(embeddings_dict, n_clusters, n_words, highligh
     """
 
     # Begin main function
-    labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
     transformed_embeddings, pca = reduce_dimensions_to_3D(list(embeddings_dict.values()))
     
     word_cluster_map = dict(zip(embeddings_dict.keys(), labels))
@@ -306,7 +305,7 @@ def get_similar_descriptors(descriptor, embeddings_dict, N=5):
 
 # Main Function for Analyze Descriptor
 
-def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
+def analyze_descriptor_text(descriptor, kmeans, labels, n_clusters=13, n_words=15):
     """
     Analyze a given descriptor:
     - Identify and print descriptors in its cluster.
@@ -316,8 +315,6 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
     results = []
     sentiment_dict = load_sentiment_dict('sentiment_dict.pkl')
     embeddings_dict = load_embeddings('condon_cleaned')
-
-    labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
     
     if descriptor not in embeddings_dict:
         if not is_valid_word(descriptor):
@@ -343,7 +340,7 @@ def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
     results.append("(Visualize all of the clusters by clicking the button below!)")
     return results
 
-def analyze_descriptor_visual(descriptor, n_clusters=13, n_words=15, gif=False):
+def analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters=13, n_words=15, gif=False):
     """
     Visualize the descriptor in a 3D cluster space.
     """
@@ -353,7 +350,7 @@ def analyze_descriptor_visual(descriptor, n_clusters=13, n_words=15, gif=False):
             raise ValueError(f"'{descriptor}' is not a recognized word.")
         embeddings_dict[descriptor] = get_embeddings(descriptor)
 
-    fig, word_cluster_map, cluster_text = visualize_embeddings_complete(embeddings_dict, n_clusters, 
+    fig, word_cluster_map, cluster_text = visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, 
                                           n_words, highlight_word=descriptor, gif=gif)
     return fig
 
@@ -414,16 +411,18 @@ analysis_results_placeholder = st.empty()
 visualize_button_placeholder = st.empty()
 visualization_placeholder = st.empty()
 
+labels, kmeans = get_clusters(embeddings, n_clusters)
+
 # When the "Analyze" button is pressed, only textual insights will be shown
 if analyze_button_placeholder.button("Analyze"):
     with st.spinner('Analyzing the descriptor...'):
-        results = analyze_descriptor_text(descriptor, n_clusters, n_similar)
+        results = analyze_descriptor_text(descriptor, kmeans, labels, n_clusters, n_similar)
         st.session_state['analysis_results'] = results
 
 # New button for visualization
 if visualize_button_placeholder.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
-        plot = analyze_descriptor_visual(descriptor, n_clusters, n_similar)
+        plot = analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters, n_similar)
         st.session_state['visualization'] = plot
 
 # Display stored results and visualization in their respective placeholders
