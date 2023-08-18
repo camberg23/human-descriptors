@@ -416,13 +416,25 @@ if analyze_button_placeholder.button("Analyze"):
         embeddings_dict = load_embeddings('condon_cleaned')
         labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
         results = analyze_descriptor_text(descriptor, kmeans, labels, n_clusters, n_similar)
+        
+        # Store kmeans and labels in st.session_state for later use
+        st.session_state['kmeans'] = kmeans
+        st.session_state['labels'] = labels
         st.session_state['analysis_results'] = results
 
 # New button for visualization
 if visualize_button_placeholder.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
-        plot = analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters, n_similar)
-        st.session_state['visualization'] = plot
+        # Retrieve kmeans and labels from st.session_state
+        kmeans = st.session_state.get('kmeans', None)
+        labels = st.session_state.get('labels', None)
+        
+        # Ensure kmeans and labels are available before proceeding
+        if kmeans is not None and labels is not None:
+            plot = analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters, n_similar)
+            st.session_state['visualization'] = plot
+        else:
+            st.warning("Please analyze the descriptor first before visualizing.")
 
 # Display stored results and visualization in their respective placeholders
 if 'analysis_results' in st.session_state:
