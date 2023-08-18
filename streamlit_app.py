@@ -313,10 +313,11 @@ def analyze_descriptor_text(descriptor, kmeans, n_clusters=13, n_words=15):
     - Identify and print similar descriptors.
     - Identify and print opposite descriptors.
     """
-    labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
     results = []
     sentiment_dict = load_sentiment_dict('sentiment_dict.pkl')
     embeddings_dict = load_embeddings('condon_cleaned')
+
+    labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
     
     if descriptor not in embeddings_dict:
         if not is_valid_word(descriptor):
