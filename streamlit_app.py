@@ -405,16 +405,23 @@ def descriptor_blender(descriptors, N=10):
     return closest_words
     
 # Streamlit App
-st.title("Human Descriptor Analyzer & Blender")
+st.title("Human Descriptor Tools: Analyzer & Blender")
 st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter any adjective that describes human personality:")
+descriptor = descriptor.replace(" ", "").replace(",", "")
 n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
+# Placeholders for analyze button, results, visualize button, and visualization
+analyze_button_placeholder = st.empty()
+analysis_results_placeholder = st.empty()
+visualize_button_placeholder = st.empty()
+visualization_placeholder = st.empty()
+
 # When the "Analyze" button is pressed, only textual insights will be shown
-if st.button("Analyze"):
+if analyze_button_placeholder.button("Analyze"):
     if " " in descriptor or "," in descriptor or len(descriptor) != 1:
         st.warning("Please enter a single adjective without spaces or commas.")
     with st.spinner('Analyzing the descriptor...'):
@@ -422,18 +429,18 @@ if st.button("Analyze"):
         st.session_state['analysis_results'] = results
 
 # New button for visualization
-if st.button("Visualize your descriptor in full 3D space (interactive)"):
+if visualize_button_placeholder.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
         plot = analyze_descriptor_visual(descriptor, n_clusters, n_similar)
         st.session_state['visualization'] = plot
 
-# Display stored results and visualization
+# Display stored results and visualization in their respective placeholders
 if 'analysis_results' in st.session_state:
     for result in st.session_state['analysis_results']:
-        st.write(result)
+        analysis_results_placeholder.write(result)
 
 if 'visualization' in st.session_state:
-    st.plotly_chart(st.session_state['visualization'], use_container_width=True)
+    visualization_placeholder.plotly_chart(st.session_state['visualization'], use_container_width=True)
 
 # Remaining Streamlit code related to the Descriptor Blender
 st.header("Descriptor Blender")
