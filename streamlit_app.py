@@ -405,7 +405,7 @@ def descriptor_blender(descriptors, N=10):
     return closest_words
     
 # Streamlit App
-st.title("Human Descriptor Tools: Analyzer & Blender")
+st.title("Human Descriptor Analyzer & Blender")
 st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
@@ -436,8 +436,8 @@ if visualize_button_placeholder.button("Visualize your descriptor in full 3D spa
 
 # Display stored results and visualization in their respective placeholders
 if 'analysis_results' in st.session_state:
-    for result in st.session_state['analysis_results']:
-        analysis_results_placeholder.write(result)
+    all_results = "\\n\\n".join(st.session_state['analysis_results'])
+    analysis_results_placeholder.markdown(all_results)
 
 if 'visualization' in st.session_state:
     visualization_placeholder.plotly_chart(st.session_state['visualization'], use_container_width=True)
