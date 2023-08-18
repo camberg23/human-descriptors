@@ -324,7 +324,7 @@ def analyze_descriptor_text(descriptor, kmeans, labels, n_clusters=13, n_words=1
     cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans, labels)
     centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, kmeans, n_clusters=n_clusters)
     closest_words_to_centroid = interpret_clusters(embeddings_dict, centroid, n_words)
-    # results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
+    # results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id+1} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
 
     # Identifying descriptors most similar and opposite to the input word
     similar = get_similar_descriptors(descriptor, embeddings_dict, N=n_words)
@@ -401,7 +401,7 @@ st.write("Analyze descriptors from Condon et al adjective dataset (used to creat
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter any adjective that describes human personality:")
 descriptor = descriptor.replace(" ", "").replace(",", "")
-n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
+n_clusters = st.number_input("Number of Clusters:", min_value=1, value=23, step=1)
 n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
 
 # Placeholders for analyze button, results, visualize button, and visualization
