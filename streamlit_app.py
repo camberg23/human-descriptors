@@ -410,18 +410,19 @@ analysis_results_placeholder = st.empty()
 visualize_button_placeholder = st.empty()
 visualization_placeholder = st.empty()
 
-embeddings_dict = load_embeddings('condon_cleaned')
-labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
-
 # When the "Analyze" button is pressed, only textual insights will be shown
 if analyze_button_placeholder.button("Analyze"):
     with st.spinner('Analyzing the descriptor...'):
+        embeddings_dict = load_embeddings('condon_cleaned')
+        labels, kmeans = get_clusters(list(embeddings_dict.values()), n_clusters)
         results = analyze_descriptor_text(descriptor, kmeans, labels, n_clusters, n_similar)
         st.session_state['analysis_results'] = results
 
 # New button for visualization
 if visualize_button_placeholder.button("Visualize your descriptor in full 3D space (interactive)"):
     with st.spinner('Generating the 3D clustering visualization...this will take about 10 seconds.'):
+        n_clusters = st.number_input("Number of Clusters:", min_value=1, value=25, step=1)
+        n_similar = st.number_input("Number of similar words to return:", min_value=1, value=15, step=1)
         plot = analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters, n_similar)
         st.session_state['visualization'] = plot
 
