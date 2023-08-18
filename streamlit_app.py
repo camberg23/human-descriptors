@@ -173,15 +173,13 @@ def get_clusters(embeddings, n_clusters):
     labels = kmeans.fit_predict(embeddings)
     return labels, kmeans
 
-def get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans):
+def get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans, labels):
     descriptor_embedding = embeddings_dict[descriptor]
     embeddings = list(embeddings_dict.values())
     
     # Find the index of the descriptor embedding in the embeddings list
     descriptor_index = next(i for i, emb in enumerate(embeddings) if np.array_equal(emb, descriptor_embedding))
-    
-    labels = kmeans.fit_predict(embeddings)
-    
+        
     # Return the cluster ID of the specified descriptor
     return labels[descriptor_index]
 
@@ -222,7 +220,8 @@ def visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, n
     - fig (plotly.graph_objects.Figure): The 3D visualization.
     - frame_paths (list): Paths to the frames captured for gif creation.
     """
-
+    if highlight_word:
+        cluster_id = get_cluster_of_descriptor(highlight_word, embeddings_dict, n_clusters, kmeans, labels)
     # Begin main function
     transformed_embeddings, pca = reduce_dimensions_to_3D(list(embeddings_dict.values()))
     
@@ -254,7 +253,7 @@ def visualize_embeddings_complete(embeddings_dict, kmeans, labels, n_clusters, n
                                    z=[df[df['adjective'] == highlight_word]['z'].values[0]], 
                                    mode='markers', 
                                    marker=dict(size=15, color='red', symbol='circle', line=dict(color='Black', width=1)),
-                                   showlegend=True, name=f"Selected word: {highlight_word} (part of cluster __)"))
+                                   showlegend=True, name=f"Selected word: {highlight_word} (part of cluster {cluster_id})"))
     cluster_texts = []
     
     for i, centroid in enumerate(kmeans.cluster_centers_):
@@ -322,7 +321,7 @@ def analyze_descriptor_text(descriptor, kmeans, labels, n_clusters=13, n_words=1
         embeddings_dict[descriptor] = get_embeddings(descriptor)
 
     # Identifying the cluster of the descriptor
-    cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans)
+    cluster_id = get_cluster_of_descriptor(descriptor, embeddings_dict, n_clusters, kmeans, labels)
     centroid = get_centroid_of_cluster(embeddings_dict, cluster_id, kmeans, n_clusters=n_clusters)
     closest_words_to_centroid = interpret_clusters(embeddings_dict, centroid, n_words)
     # results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
