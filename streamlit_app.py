@@ -306,7 +306,7 @@ def get_similar_descriptors(descriptor, embeddings_dict, N=5):
 
 # Main Function for Analyze Descriptor
 
-def analyze_descriptor_text(descriptor, kmeans, n_clusters=13, n_words=15):
+def analyze_descriptor_text(descriptor, n_clusters=13, n_words=15):
     """
     Analyze a given descriptor:
     - Identify and print descriptors in its cluster.
@@ -400,7 +400,7 @@ def descriptor_blender(descriptors, N=10):
     
 # Streamlit App
 st.title("Human Descriptor Analyzer & Blender")
-st.write("Analyze descriptors from Condon adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
+st.write("Analyze descriptors from Condon et al adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
 
 st.header("Analyze Descriptor")
 descriptor = st.text_input("Enter any adjective that describes human personality:")
