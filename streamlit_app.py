@@ -335,8 +335,8 @@ def analyze_descriptor_text(descriptor, kmeans, labels, n_clusters=13, n_words=1
     results.append(r1)
     results.append(r2)
 
-    results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
-    results.append("(Visualize all of the clusters by clicking the button below!)")
+    results.append(f"'{descriptor.capitalize()}' belongs to cluster {cluster_id + 1} of {n_clusters}: {', '.join(closest_words_to_centroid)}")
+    results.append("(Visualize your word amongst all of these clusters by clicking the button below!)")
     return results
 
 def analyze_descriptor_visual(descriptor, kmeans, labels, n_clusters=13, n_words=15, gif=False):
@@ -391,7 +391,7 @@ def descriptor_blender(descriptors, N=10):
     enrich_scores = {word: distance * sum([np.linalg.norm(embeddings_dict[descriptor] - embeddings_dict[word]) for descriptor in descriptors]) for word, distance in distances_to_combined.items()}
     
     # Get the top N words based on enriched scores
-    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word])[:N]
+    closest_words = sorted(enrich_scores.keys(), key=lambda word: enrich_scores[word], reverse=True)[:N]
     return closest_words
     
 # Streamlit App
@@ -458,13 +458,9 @@ if st.button("Blend"):
     # Create two columns to display the words
     col1, col2 = st.columns(2)
     
-    # Split the words into two lists
-    half_len = len(intersection_words) // 2
-    words_col1 = intersection_words[:half_len]
-    words_col2 = intersection_words[half_len:]
-    
-    for word in words_col1:
-        col1.write(word)
-    
-    for word in words_col2:
-        col2.write(word)
+    # Iterate through words in pairs
+    for i in range(0, len(intersection_words), 2):
+        word1 = intersection_words[i]
+        word2 = intersection_words[i + 1] if i + 1 < len(intersection_words) else ""
+        col1.write(word1)
+        col2.write(word2)
