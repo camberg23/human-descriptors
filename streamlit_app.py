@@ -52,12 +52,6 @@ def load_embeddings(filename):
 #     print(f"Embeddings loaded from {filename}.pickle")
     return embeddings_dict
 
-
-def get_clusters(embeddings, n_clusters):
-    kmeans = KMeans(n_clusters=n_clusters, random_state=0, n_init='auto').fit(embeddings)
-    labels = kmeans.labels_
-    return labels, kmeans
-
 def capture_frames_from_plotly(fig, angles, directory="frames", zoom_factor=1):
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -175,7 +169,7 @@ def interpret_clusters(embeddings_dict, centroid, n_closest):
     return closest_words
 
 def get_clusters(embeddings, n_clusters):
-    kmeans = KMeans(n_clusters=n_clusters, n_init='auto')
+    kmeans = KMeans(n_clusters=n_clusters, n_init='auto', random_state=23)
     labels = kmeans.fit_predict(embeddings)
     return labels, kmeans
 
