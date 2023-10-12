@@ -396,7 +396,7 @@ def descriptor_blender(descriptors, N=10):
     
 # Streamlit App
 st.title("Human Descriptor Analyzer & Blender")
-st.write("Analyze descriptors from Condon et al adjective dataset (used to create the Big Five), and blend them to find interesting intersections.")
+st.markdown("Analyze descriptors from [Condon et al adjective dataset](https://pie-lab.github.io/tda/tda-difficulty.html) (a superset of the trait descriptive adjectives used to construct the Five Factor Model), and blend them to find interesting intersections in the high-dimensional embeddings space.")
 
 st.header("Analyze Descriptor")
 st.markdown("""
